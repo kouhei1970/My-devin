@@ -77,18 +77,21 @@ agent:
 
 # Code Generation Settings
 code_generation:
-  # Supported languages
+  # Supported languages (priority order)
   languages:
+    - cpp        # 主要言語（組み込み開発）
+    - c
     - python
     - typescript
     - javascript
     - go
     - rust
     - java
-    - cpp
-    - c
     - ruby
     - php
+
+  # Primary language for embedded development
+  primary_language: cpp
 
   # Default templates directory
   templates_dir: ./config/prompts
@@ -98,6 +101,136 @@ code_generation:
     enabled: true
     run_linters: true
     run_formatters: true
+
+  # C++ specific settings
+  cpp:
+    standard: "c++17"  # c++11, c++14, c++17, c++20
+    exceptions: false  # 組み込み環境では例外なし
+    rtti: false        # RTTIなし
+    optimization: "O2" # O0, O1, O2, O3, Os (size), Og (debug)
+    warnings: "all"    # all, extra, pedantic
+
+    # Embedded-specific flags
+    embedded:
+      no_stdlib: false      # -nostdlib (必要に応じて)
+      freestanding: false   # -ffreestanding
+      static_analysis: true # clang-tidy, cppcheck
+
+    # Coding standards
+    standards:
+      - misra_cpp         # MISRA C++ (automotive/industrial)
+      - cert_cpp          # CERT C++ Secure Coding
+      # - autosar_cpp     # AUTOSAR C++14 (automotive)
+      # - jsf_cpp         # JSF++ (aerospace)
+
+# Embedded Development Settings
+embedded_development:
+  # Primary RTOS
+  default_rtos: freertos
+
+  # Supported RTOS
+  rtos:
+    freertos:
+      enabled: true
+      version: "10.5.1"
+      config_path: "./config/freertos_config.h"
+      heap_implementation: "heap_4"  # heap_1, heap_2, heap_3, heap_4, heap_5
+
+    zephyr:
+      enabled: false
+      version: "3.4.0"
+
+    mbed_os:
+      enabled: false
+      version: "6.16.0"
+
+    riot:
+      enabled: false
+
+  # Target microcontrollers
+  targets:
+    default: stm32
+
+    stm32:
+      series: "STM32F4"  # F0, F1, F2, F3, F4, F7, H7, L0, L1, L4, G0, G4
+      hal_version: "1.27.1"
+      cmsis_version: "5.9.0"
+
+    esp32:
+      framework: "esp-idf"  # esp-idf, arduino
+      version: "5.0"
+
+    nordic:
+      series: "nRF52840"
+      sdk_version: "17.1.0"
+
+    rpi_pico:
+      sdk_version: "1.5.1"
+
+  # Hardware peripherals
+  peripherals:
+    gpio:
+      enabled: true
+      default_mode: "push_pull"  # push_pull, open_drain, input
+
+    uart:
+      enabled: true
+      default_baudrate: 115200
+      dma: true
+
+    i2c:
+      enabled: true
+      speed: "fast"  # standard (100kHz), fast (400kHz), fast_plus (1MHz)
+
+    spi:
+      enabled: true
+      mode: 0  # 0, 1, 2, 3
+
+    adc:
+      enabled: true
+      resolution: 12  # bits
+
+    pwm:
+      enabled: true
+      frequency: 1000  # Hz
+
+    timer:
+      enabled: true
+
+  # Memory constraints
+  memory:
+    flash_size: 512  # KB
+    ram_size: 128    # KB
+    stack_size: 4    # KB (per task)
+    heap_size: 32    # KB (if using dynamic allocation)
+
+    # Memory optimization
+    optimization:
+      minimize_heap_usage: true
+      static_allocation_preferred: true
+      pool_allocation: true
+
+  # Real-time constraints
+  realtime:
+    tick_rate: 1000  # Hz (RTOS tick)
+    max_interrupt_latency: 10  # microseconds
+    priority_levels: 32
+
+  # Power management
+  power:
+    low_power_mode: true
+    sleep_modes:
+      - sleep
+      - stop
+      - standby
+
+  # Debug settings
+  debug:
+    uart_logging: true
+    log_level: "INFO"  # DEBUG, INFO, WARN, ERROR
+    assertions: true
+    stack_monitoring: true
+    memory_tracking: true
 
 # Git Settings
 git:
