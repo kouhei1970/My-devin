@@ -50,12 +50,14 @@ else
     echo -e "${GREEN}✓ Node.js already installed${NC}"
 fi
 
-# Ollama
-if ! command -v ollama &> /dev/null; then
-    echo -e "${YELLOW}Installing Ollama...${NC}"
-    brew install ollama
+# LM Studio
+if ! command -v lmstudio &> /dev/null; then
+    echo -e "${YELLOW}Installing LM Studio...${NC}"
+    brew install --cask lm-studio
+    echo -e "${GREEN}✓ LM Studio installed${NC}"
+    echo -e "${YELLOW}Note: Please launch LM Studio manually and download models${NC}"
 else
-    echo -e "${GREEN}✓ Ollama already installed${NC}"
+    echo -e "${GREEN}✓ LM Studio already installed${NC}"
 fi
 
 # Git
@@ -122,19 +124,27 @@ echo -e "${GREEN}=========================================${NC}"
 echo ""
 echo "Next steps:"
 echo ""
-echo "1. Download LLM models:"
-echo -e "   ${YELLOW}ollama pull qwen2.5-coder:32b${NC}"
+echo "1. Launch LM Studio and download models:"
+echo -e "   ${YELLOW}Open LM Studio → Search tab → Download 'Qwen2.5-Coder-32B-Instruct-GGUF'${NC}"
+echo -e "   ${YELLOW}Recommended quantization: Q4_K_M or Q5_K_M${NC}"
 echo ""
-echo "2. Start Ollama (in a separate terminal):"
-echo -e "   ${YELLOW}ollama serve${NC}"
+echo "2. Start LM Studio Server:"
+echo -e "   ${YELLOW}LM Studio → Local Server tab → Select model → Start Server${NC}"
+echo -e "   ${YELLOW}Server will run on http://localhost:1234${NC}"
 echo ""
-echo "3. Start backend server (in a separate terminal):"
+echo "3. Verify LM Studio is running:"
+echo -e "   ${YELLOW}curl http://localhost:1234/v1/models${NC}"
+echo ""
+echo "4. Start backend server (in a separate terminal):"
 echo -e "   ${YELLOW}cd backend && source venv/bin/activate && python -m uvicorn src.api.main:app --reload${NC}"
 echo ""
-echo "4. Start frontend (in a separate terminal):"
+echo "5. Start frontend (in a separate terminal):"
 echo -e "   ${YELLOW}cd frontend && npm run dev${NC}"
 echo ""
-echo "5. Use CLI:"
+echo "6. Use CLI:"
 echo -e "   ${YELLOW}my-devin chat${NC}"
 echo ""
 echo -e "${GREEN}Happy coding!${NC}"
+echo ""
+echo "For detailed setup instructions, see:"
+echo -e "   ${YELLOW}docs/LM_STUDIO_SETUP.md${NC}"

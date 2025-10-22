@@ -49,9 +49,9 @@ Mac Studio上でQwen3-coderなどの大規模言語モデル(LLM)を活用し、
   - Python 3.11+
   - Node.js 20+ (フロントエンド用)
 - **LLM実行基盤**:
-  - Ollama (推奨: 簡単なセットアップ)
-  - MLX (Apple Silicon最適化)
-  - llama.cpp (高度なカスタマイズ)
+  - **LM Studio** (推奨: GUI付き、OpenAI互換API、初心者に最適)
+  - Ollama (CLI志向、シンプル)
+  - MLX (Apple Silicon最適化、上級者向け)
 - **バージョン管理**: Git 2.30+
 
 ---
@@ -184,8 +184,9 @@ Mac Studio上でQwen3-coderなどの大規模言語モデル(LLM)を活用し、
 ┌─────────────────────────────────────────────┐
 │         LLM Layer                           │
 │  ┌──────────┐ ┌──────────┐ ┌────────────┐ │
-│  │  Ollama  │ │   MLX    │ │ llama.cpp  │ │
+│  │LM Studio │ │  Ollama  │ │    MLX     │ │
 │  │ Adapter  │ │ Adapter  │ │  Adapter   │ │
+│  │(OpenAI)  │ │          │ │            │ │
 │  └──────────┘ └──────────┘ └────────────┘ │
 └─────────────────────────────────────────────┘
 ```
@@ -208,9 +209,9 @@ Mac Studio上でQwen3-coderなどの大規模言語モデル(LLM)を活用し、
   - FastAPI (REST API)
   - WebSocket (リアルタイム通信)
 - **LLM連携**:
-  - ollama-python
-  - mlx-lm
-  - llama-cpp-python
+  - openai (LM Studio用 - OpenAI互換API)
+  - ollama-python (Ollama用 - オプション)
+  - mlx-lm (MLX用 - オプション)
 - **コード解析**:
   - tree-sitter (多言語パーサー)
   - ast (Python AST)
@@ -306,8 +307,10 @@ Mac Studio上でQwen3-coderなどの大規模言語モデル(LLM)を活用し、
 
 ## 11. 参考資料
 
+- **LM Studio**: https://lmstudio.ai/ (推奨LLM実行環境)
 - Qwen3-coder: https://github.com/QwenLM/Qwen
-- Ollama: https://ollama.ai/
+- OpenAI API: https://platform.openai.com/docs/api-reference
+- Ollama: https://ollama.ai/ (代替LLM実行環境)
 - MLX: https://github.com/ml-explore/mlx
 - Aider: https://github.com/paul-gauthier/aider
 - tree-sitter: https://tree-sitter.github.io/

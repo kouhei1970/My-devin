@@ -38,34 +38,38 @@ Mac Studio上でQwen3-coderなどの大規模言語モデル(LLM)を活用し、
 
 ## クイックスタート
 
-### 1. 依存関係のインストール
+### 1. LM Studioのインストール
+
+```bash
+# LM Studioをダウンロード＆インストール
+# https://lmstudio.ai/ から最新版をダウンロード
+# または Homebrew Cask経由
+brew install --cask lm-studio
+```
+
+### 2. LM Studioでモデルをダウンロード
+
+1. **LM Studioを起動**
+2. **Search**タブで以下のモデルを検索＆ダウンロード：
+   - `Qwen/Qwen2.5-Coder-32B-Instruct-GGUF` (推奨: Q4_K_M 量子化)
+   - または `Qwen/Qwen2.5-Coder-14B-Instruct-GGUF` (軽量版)
+   - または `deepseek-ai/DeepSeek-Coder-V2-Instruct-GGUF`
+
+3. **Local Server**タブでモデルをロード
+   - ポート: `1234`（デフォルト）
+   - モデルを選択して「Start Server」
+
+### 3. 開発ツールのインストール
 
 ```bash
 # Homebrew（未インストールの場合）
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # 必須ツールのインストール
-brew install python@3.11 node@20 git ollama
-
-# Ollama起動
-ollama serve
+brew install python@3.11 node@20 git
 ```
 
-### 2. モデルのダウンロード
-
-```bash
-# Qwen3-coder 32Bモデル（推奨）
-ollama pull qwen2.5-coder:32b
-
-# または14Bモデル（軽量版）
-ollama pull qwen2.5-coder:14b
-
-# その他のモデル
-ollama pull deepseek-coder:33b
-ollama pull codellama:34b
-```
-
-### 3. プロジェクトのセットアップ
+### 4. プロジェクトのセットアップ
 
 ```bash
 # リポジトリのクローン
@@ -87,27 +91,27 @@ cd ../cli
 pip install -e .
 ```
 
-### 4. 起動
+### 5. 起動
 
-**ターミナル1: Ollama（別ウィンドウで）**
-```bash
-ollama serve
-```
+**ステップ1: LM Studioでサーバー起動**
+- LM Studioを開く
+- Local Serverタブで「Start Server」をクリック
+- サーバーが http://localhost:1234 で起動
 
-**ターミナル2: バックエンド**
+**ターミナル1: バックエンド**
 ```bash
 cd backend
 source venv/bin/activate
 python -m uvicorn src.api.main:app --reload
 ```
 
-**ターミナル3: フロントエンド**
+**ターミナル2: フロントエンド**
 ```bash
 cd frontend
 npm run dev
 ```
 
-**ターミナル4: CLI（対話モード）**
+**ターミナル3: CLI（対話モード）**
 ```bash
 my-devin chat
 ```
@@ -163,12 +167,12 @@ my-devin/
 ### Phase 1: MVP（4週間） ✅ 進行中
 - [x] プロジェクトセットアップ
 - [x] 要件定義・実装計画作成
-- [ ] LLM基本統合（Ollama）
+- [ ] LLM基本統合（LM Studio）
 - [ ] CLIベース機能
 - [ ] 基本的なコード生成
 
 ### Phase 2: コア機能（6週間）
-- [ ] マルチLLMバックエンド（MLX、llama.cpp）
+- [ ] マルチLLMバックエンド（Ollama、MLX）
 - [ ] エージェント機能
 - [ ] Web UI開発
 - [ ] Git連携
@@ -194,8 +198,13 @@ my-devin/
 
 ```yaml
 llm:
-  provider: ollama
-  default_model: qwen2.5-coder:32b
+  provider: lm-studio  # lm-studio, ollama, mlx
+  default_model: qwen2.5-coder-32b-instruct
+
+  # LM Studio設定
+  lm_studio:
+    base_url: http://localhost:1234/v1
+    timeout: 300
 
 api:
   host: 0.0.0.0
@@ -207,8 +216,9 @@ project:
 
 環境変数（`.env`）:
 ```bash
-LLM_PROVIDER=ollama
-DEFAULT_MODEL=qwen2.5-coder:32b
+LLM_PROVIDER=lm-studio
+LM_STUDIO_BASE_URL=http://localhost:1234/v1
+DEFAULT_MODEL=qwen2.5-coder-32b-instruct
 API_PORT=8000
 ```
 
@@ -223,16 +233,24 @@ API_PORT=8000
 - **代替**: DeepSeek-Coder 33B
 - **複数モデル同時ロード可能**
 
-### Q: Ollamaとは？
+### Q: LM Studioとは？
 
-Mac向けに最適化されたLLM実行環境です。インストールと使用が簡単で、My-devinのデフォルトバックエンドです。
+GUI付きのLLM実行環境で、以下の特徴があります：
+- **直感的なGUI**: モデルのダウンロード・管理が簡単
+- **OpenAI互換API**: 標準的なAPI仕様で統合が容易
+- **Mac最適化**: Apple Silicon向けに最適化
+- **初心者に最適**: セットアップが簡単で、すぐに使い始められる
 
-### Q: MLXとの違いは？
+My-devinのデフォルトバックエンドです。
 
-- **Ollama**: 簡単、初心者向け、すぐ使える
-- **MLX**: Apple Silicon最適化、最高速、やや複雑
+### Q: 他のLLMバックエンドは使えますか？
 
-両方サポートしているので、切り替え可能です。
+はい、以下もサポート予定です：
+- **LM Studio**: GUI付き、初心者向け（推奨）
+- **Ollama**: CLI志向、シンプル
+- **MLX**: Apple Silicon最適化、最高速、上級者向け
+
+設定ファイルで簡単に切り替え可能です。
 
 ### Q: 商用利用可能ですか？
 
@@ -256,26 +274,39 @@ Mac向けに最適化されたLLM実行環境です。インストールと使�
 
 ## トラブルシューティング
 
-### Ollamaが起動しない
-```bash
-# Ollamaを再起動
-brew services restart ollama
+### LM Studioのサーバーに接続できない
 
-# または手動起動
-ollama serve
-```
+**原因と対処法:**
+1. **LM Studioが起動していない**
+   - LM Studioアプリを開き、Local Serverタブで「Start Server」をクリック
+
+2. **ポートが異なる**
+   - LM Studioのポート設定を確認（デフォルト: 1234）
+   - `.env`ファイルの`LM_STUDIO_BASE_URL`を更新
+
+3. **モデルがロードされていない**
+   - LM StudioのLocal Serverタブでモデルを選択
+   - 「Load Model」をクリック
 
 ### モデルのダウンロードが遅い
-```bash
-# 別のミラーを使用（中国リージョン等）
-export OLLAMA_MIRRORS=https://ollama.ai
-ollama pull qwen2.5-coder:32b
-```
+- LM Studio内でダウンロード速度を確認
+- 量子化レベルを下げる（Q8 → Q4_K_M → Q4_0）
+- 安定したWi-Fi/有線接続を使用
 
 ### メモリ不足エラー
-- より小さいモデルを使用（7B/14B）
+- より小さいモデルを使用（32B → 14B → 7B）
+- 量子化レベルを下げる（Q8 → Q4）
 - 他のアプリケーションを終了
 - `config/default.yaml`で`max_memory`を調整
+
+### API接続エラー
+```bash
+# LM Studioサーバーが稼働中か確認
+curl http://localhost:1234/v1/models
+
+# 正常なレスポンス例:
+# {"object":"list","data":[{"id":"qwen2.5-coder-32b-instruct",...}]}
+```
 
 ---
 
@@ -287,8 +318,10 @@ ollama pull qwen2.5-coder:32b
 
 ## 関連リンク
 
+- **LM Studio**: https://lmstudio.ai/ (推奨LLM実行環境)
 - **Qwen3-coder**: https://github.com/QwenLM/Qwen
-- **Ollama**: https://ollama.ai/
+- **OpenAI API**: https://platform.openai.com/docs/api-reference
+- **Ollama**: https://ollama.ai/ (代替LLM実行環境)
 - **MLX**: https://github.com/ml-explore/mlx
 - **FastAPI**: https://fastapi.tiangolo.com/
 - **React**: https://react.dev/

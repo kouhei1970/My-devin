@@ -12,7 +12,7 @@ license = {text = "MIT"}
 authors = [
     {name = "Your Name", email = "your.email@example.com"}
 ]
-keywords = ["llm", "code-generation", "automation", "qwen", "ollama"]
+keywords = ["llm", "code-generation", "automation", "qwen", "lm-studio", "openai"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -32,9 +32,9 @@ dependencies = [
     "websockets>=12.0",
 
     # LLM backends
-    "ollama>=0.1.0",
-    "mlx-lm>=0.1.0; platform_system=='Darwin'",
-    "llama-cpp-python>=0.2.0",
+    "openai>=1.10.0",  # LM Studio用 (OpenAI互換API)
+    "ollama>=0.1.0",  # オプション
+    "mlx-lm>=0.1.0; platform_system=='Darwin'",  # オプション (macOS)
 
     # Code parsing
     "tree-sitter>=0.20.0",
